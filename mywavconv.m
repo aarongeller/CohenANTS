@@ -31,11 +31,10 @@ end
 
 datamat = [];
 for i=1:numtrials
-    % concatenate trials
-    datamat = [datamat; d(:,:,i)'];
+    % concatenate trials horizontally
+    datamat = [datamat d(:,:,i)];
 end
-datamat_fft = fft(datamat, conv_samples_pow2);
-datamat_fft = datamat_fft.'; % need to use dot transpose in this case
+datamat_fft = fft(datamat, conv_samples_pow2, 2);
 
 m = zeros(numchannels, numsamples, numtrials, numfreqs);
 half_wav_length = floor(wav_length/2);
