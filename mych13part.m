@@ -35,10 +35,6 @@ num_frex = 30;
 frex = logspace(log10(min_freq),log10(max_freq),num_frex);
 
 tempconv = mywavconv(EEG.data(chan2use_ind, :, trials), EEG.srate, frex);
-tempconv2 = mywavconv_bak(EEG.data(chan2use_ind, :, trials), EEG.srate, frex);
-% tempconv_trialavg = squeeze(mean(tempconv, 3));
-% temppower = abs(tempconv_trialavg).^2;
-% eegpower = temppower';
 temppower = abs(tempconv).^2;
 % ***LEARNING POINT***: you need to take the mean AFTER computing power 
 temppower_trialavg = squeeze(mean(temppower,3));
