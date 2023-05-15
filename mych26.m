@@ -34,7 +34,7 @@ colorbar;
 title('ISPC-trials');
 
 % do PLI:
-plimat = myPLI_seeded(convmat, seedelec);
+plimat = myPLItrials_seeded(convmat, seedelec);
 plimat_freqmean = mean(plimat, 3);
 plimat_timewin = mean(plimat_freqmean(:,timeinds), 2);
 figure; topoplot(plimat_timewin, EEG.chanlocs, 'electrodes', 'off', ...
@@ -43,10 +43,20 @@ colorbar;
 title('PLI');
 
 % do wPLI:
-wplimat = myWPLI_seeded(convmat, seedelec);
+wplimat = myWPLItrials_seeded(convmat, seedelec);
 wplimat_freqmean = mean(wplimat, 3);
 wplimat_timewin = mean(wplimat_freqmean(:,timeinds), 2);
 figure; topoplot(wplimat_timewin, EEG.chanlocs, 'electrodes', 'off', ...
                  'plotrad', .53, 'maplimits', [-.2 .2]);
 colorbar;
 title('wPLI');
+
+% do imaginary coherence:
+icmat = myimagcohtrials_seeded(convmat, seedelec);
+icmat_freqmean = mean(icmat, 3);
+icmat_timewin = mean(icmat_freqmean(:,timeinds), 2);
+figure; topoplot(icmat_timewin, EEG.chanlocs, 'electrodes', 'off', ...
+                 'plotrad', .53, ...
+                 'maplimits', [0 .125]);
+colorbar;
+title('imaginary coherence');
