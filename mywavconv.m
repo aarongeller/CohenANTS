@@ -24,11 +24,9 @@ conv_length = total_data_samples + wav_length - 1;
 conv_samples_pow2 = pow2(nextpow2(conv_length));
 
 % make matrix of fft of wavelets: freqs x conv_samples_pow2
-wavmat_fft_wide = zeros(numfreqs, conv_samples_pow2);
-for i=1:numfreqs
-    wavmat_fft_wide(i,:) = fft(wavmat(i,:), conv_samples_pow2);
-end
+wavmat_fft_wide = fft(wavmat, conv_samples_pow2, 2);
 
+% make matrix of fft of data: channels x conv_samples_pow2
 datamat = [];
 for i=1:numtrials
     % concatenate trials horizontally
