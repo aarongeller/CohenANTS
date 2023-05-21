@@ -23,8 +23,12 @@ total_data_samples = numsamples*numtrials;
 conv_length = total_data_samples + wav_length - 1;
 conv_samples_pow2 = pow2(nextpow2(conv_length));
 
-% make matrix of fft of wavelets: freqs x conv_samples_pow2
+% make matrix of fft of wavelets: freqs x channels x conv_samples_pow2
 wavmat_fft_wide = fft(wavmat, conv_samples_pow2, 2);
+freq_wavmat_fft_wide = zeros(numfreqs, numchannels, conv_samples_pow2);
+for i=1:numfreqs
+    freq_wavmat_fft_wide(i,:,:) = repmat(wavmat_fft_wide(i,:), numchannels, 1);
+end
 
 % make matrix of fft of data: channels x conv_samples_pow2
 datamat = [];
@@ -34,19 +38,24 @@ for i=1:numtrials
 end
 datamat_fft = fft(datamat, conv_samples_pow2, 2);
 
+% finish convolution: 
+% for every freq, do ifft of pointwise product of data-fft (channels x
+% conv_samples_pow2) and wavelet-fft (channels x conv_samples_pow2)
 m = zeros(numchannels, numsamples, numtrials, numfreqs);
 half_wav_length = floor(wav_length/2);
 for i=1:numfreqs
-    for j=1:numchannels
-        % finish convolution
-        this_freq_conv_vec = ifft(datamat_fft(j,:).*wavmat_fft_wide(i,:));
-        % trim the pow2 samples from the convolution
-        this_freq_conv_vec = this_freq_conv_vec(1:conv_length);
-        % trim the wavelet-samples from the convolution
-        this_freq_conv_vec = this_freq_conv_vec(half_wav_length+1:length(this_freq_conv_vec)-half_wav_length);
-        this_freq_conv_mat = reshape(this_freq_conv_vec, numsamples, numtrials);
-        m(j,:,:,i) = this_freq_conv_mat;
+    thiswavmat  = squeeze(freq_wavmat_fft_wide(i,:,:));
+    if numchannels==1
+        thiswavmat = thiswavmat.';
     end
+    this_freq_conv = ifft(datamat_fft.*thiswavmat, [], 2);
+    % trim the pow2 samples from the convolution
+    this_freq_conv = this_freq_conv(:,1:conv_length);
+    % trim the wavelet-samples from the convolution
+    this_freq_conv_mat = this_freq_conv(:,half_wav_length+1:length(this_freq_conv)-half_wav_length);
+    % restore trials with reshape
+    this_freq_conv_mat = reshape(this_freq_conv_mat, numchannels, numsamples, numtrials);
+    m(:,:,:,i) = this_freq_conv_mat;
 end
 
 % learning points 5/2023: 1) take average of power TFS, not of complex
