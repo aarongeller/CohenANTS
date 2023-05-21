@@ -54,8 +54,7 @@ for i=1:numfreqs
     % trim the wavelet-samples from the convolution
     this_freq_conv_mat = this_freq_conv(:,half_wav_length+1:length(this_freq_conv)-half_wav_length);
     % restore trials with reshape
-    this_freq_conv_mat = reshape(this_freq_conv_mat, numchannels, numsamples, numtrials);
-    m(:,:,:,i) = this_freq_conv_mat;
+    m(:,:,:,i) = reshape(this_freq_conv_mat, numchannels, numsamples, numtrials);
 end
 
 % learning points 5/2023: 1) take average of power TFS, not of complex
