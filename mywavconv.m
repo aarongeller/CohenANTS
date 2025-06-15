@@ -16,7 +16,7 @@ min_wavenum = 3; % for lowest freq
 max_wavnum = 10; % for highest freq
 wavenums = logspace(log10(min_wavenum), log10(max_wavnum), length(freqs));
 for i=1:length(freqs)
-    wavmat(i,:) = mywav(halfn, 0, wavenums(i), freqs(i));
+    wavmat(i,:) = mywav(halfn, 0, wavenums(i), freqs(i), srate);
 end
 
 total_data_samples = numsamples*numtrials;
